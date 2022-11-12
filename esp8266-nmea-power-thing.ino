@@ -1,23 +1,23 @@
 
 /*
   NMEA Power Thing
- 
+
   Provides a 4 channel current, voltage and coloumb counter
         with NMEA formatted XDR sentence broadcast.
- 
+
   The circuit:
-  * I2C bus: ADS1115 16-bit metering four ~12V DC supply via voltage divider
+    I2C bus: ADS1115 16-bit metering four ~12V DC supply via voltage divider
              ADS1115 16 bit metering four current shunts an eg 75mV 500A shunt
              20x4 LCD display
-  * D5, D6   EC11 5 Pin Rotary Encoder (rotary contacts)
-  * D7       EC11 5 Pin Rotary Encoder (push button switch)         
-  
+    D5, D6   EC11 5 Pin Rotary Encoder (rotary contacts)
+    D7       EC11 5 Pin Rotary Encoder (push button switch)
+
   Created 19 January 2022
   By Nicholas Taylor
- 
+
   http://url/of/online/tutorial.cc
   https://stackr.ca
- 
+
 */
 
 #include <konfig.h>
@@ -187,9 +187,9 @@ float availableUpdateFrequencies[] = {0, 0.0000115741, 0.000034722222, 0.0000694
 
 char * availableUpdateFrequenciesLabels[] = {
   " OFF ",
-    " 24hr",
-    "  8hr",
-    "  4hr",
+  " 24hr",
+  "  8hr",
+  "  4hr",
   "  1hr",
   " 15m ",
   " 60s ",
@@ -526,9 +526,9 @@ void setup()
 
   //WiFiManager wifiManager;
   //    wifiManager.setConfigPortalTimeout(15);
-//  wifiManager.setAPCallback(configModeCallback);
+  //  wifiManager.setAPCallback(configModeCallback);
   /*
-  if ( digitalRead(D7) == LOW ) {
+    if ( digitalRead(D7) == LOW ) {
 
     lcd.setCursor(0, 1);
     lcd.print("WIFI  Portal opened");
@@ -548,11 +548,11 @@ void setup()
 
     delay(1000);
 
-  }
+    }
   */
-    lcd.setCursor(0, 1);
-    lcd.print("WIFI  Connecting ");
-    lcd.setCursor(0, 1);
+  lcd.setCursor(0, 1);
+  lcd.print("WIFI  Connecting ");
+  lcd.setCursor(0, 1);
   lcd.print("WIFI  Portal opened");
   WiFi.mode(WIFI_STA); // explicitly set mode, esp defaults to STA+AP
   bool res;
@@ -571,11 +571,11 @@ void setup()
     lcd.setCursor(0, 1);         // move cursor to   (2,
     lcd.print("WIFI  SSID SET   ");
     Serial.println("WIFI SSID got.");
-    sendPMTK("WIFI SSID got"); 
+    sendPMTK("WIFI SSID got");
     // Connected to an SSID.
   }
   //if (displayFlag) {
-    delay(1000);
+  delay(1000);
   //}
 
 
@@ -583,45 +583,45 @@ void setup()
   server.begin();
   //delay(2000);
 
-/*
-  int wifiCount = 0;
-  int maxWifiCount = 20;
+  /*
+    int wifiCount = 0;
+    int maxWifiCount = 20;
 
-  int wifiStartTime = micros();
-  WiFi.begin();
+    int wifiStartTime = micros();
+    WiFi.begin();
 
-  while (WiFi.status() != WL_CONNECTED && wifiCount < maxWifiCount) {
+    while (WiFi.status() != WL_CONNECTED && wifiCount < maxWifiCount) {
 
-    delay(500);
-    lcd.setCursor(17, 1);        // move cursor to   (2,
+      delay(500);
+      lcd.setCursor(17, 1);        // move cursor to   (2,
 
-    int wifiElapsedTime = int((micros() - wifiStartTime) / 1e6);
-    if (wifiElapsedTime < 10) {
-      lcd.print(wifiElapsedTime);
-      lcd.print("s ");
+      int wifiElapsedTime = int((micros() - wifiStartTime) / 1e6);
+      if (wifiElapsedTime < 10) {
+        lcd.print(wifiElapsedTime);
+        lcd.print("s ");
 
+      } else {
+
+        lcd.print(".  ");
+      }
+
+      if (SerialDebug)
+      {
+        Serial.print(".");
+      }
+      wifiCount += 1;
+
+
+    }
+
+    lcd.setCursor(0, 1);         // move cursor to   (2, 1)
+    if (WiFi.status() == WL_CONNECTED) {
+      lcd.print(     "WIFI  Connected     ");
     } else {
+      lcd.print(     "WIFI  Not connected    ");
 
-      lcd.print(".  ");
     }
-
-    if (SerialDebug)
-    {
-      Serial.print(".");
-    }
-    wifiCount += 1;
-
-
-  }
-
-  lcd.setCursor(0, 1);         // move cursor to   (2, 1)
-  if (WiFi.status() == WL_CONNECTED) {
-    lcd.print(     "WIFI  Connected     ");
-  } else {
-    lcd.print(     "WIFI  Not connected    ");
-
-  }
-*/
+  */
   delay(1000);
   lcd.clear();
 }
@@ -636,7 +636,7 @@ void displayAbout() {
   lcd.print("stackr.ca");
 
   lcd.setCursor(0, 2);         // move cursor to   (2, 1)
-  lcd.print("3 February 2022");
+  lcd.print("11 November 2022");
 
   lcd.setCursor(0, 3);         // move cursor to   (2, 1)
   lcd.print(nuuidStr);
@@ -827,24 +827,24 @@ void defaultSettings() {
 }
 
 void sendPMTK(char * data) {
-/*
- * Packet Length:
-The maximum length of each packet is restricted to 255 bytes.
-Packet Contents:
-Preamble: 1 byte character. ‘$’
-Talker ID: 4 bytes character string. “PMTK”
-Packet Type: 3 bytes character string. From “000” to “999”
-Data Field: The Data Field has variable length depending on the packet type.
-A comma symbol ‘,’ must be inserted ahead each data field to help the decoder process the
-Data Field.
-*: 1 byte character. ‘*’
-The start symbol is used to mark the end of Data Field.
-CHK1, CHK2: 2 bytes character string. CHK1 and CHK2 are the checksum of data between Preamble and ‘*’.
-CR, LF: 2 bytes binary data. (0x0D, 0x0A)
-The 2 bytes are used to identify the end of a packet
- * 
- */
- char nmeaData[255];
+  /*
+     Packet Length:
+    The maximum length of each packet is restricted to 255 bytes.
+    Packet Contents:
+    Preamble: 1 byte character. ‘$’
+    Talker ID: 4 bytes character string. “PMTK”
+    Packet Type: 3 bytes character string. From “000” to “999”
+    Data Field: The Data Field has variable length depending on the packet type.
+    A comma symbol ‘,’ must be inserted ahead each data field to help the decoder process the
+    Data Field.
+    : 1 byte character. ‘*’
+    The start symbol is used to mark the end of Data Field.
+    CHK1, CHK2: 2 bytes character string. CHK1 and CHK2 are the checksum of data between Preamble and ‘*’.
+    CR, LF: 2 bytes binary data. (0x0D, 0x0A)
+    The 2 bytes are used to identify the end of a packet
+
+  */
+  char nmeaData[255];
   char *dollar = "$";
   char *sentenceNMEA = "PMTK";
   strcpy(nmeaData, dollar);
@@ -855,7 +855,7 @@ The 2 bytes are used to identify the end of a packet
   strcat(nmeaData, "000");
   strcat(nmeaData, ",");
   strcat(nmeaData, data);
-  
+
   int crc =  nmea0183_checksum(nmeaData);
   char hex[2];
   sprintf(hex, "%02X", crc);
@@ -865,7 +865,7 @@ The 2 bytes are used to identify the end of a packet
   strcat(nmeaData, hex);
 
   sendUDP(nmeaData);
-  
+
 }
 
 void sendXDR(char * prefixNMEA, char * sensorNameA, float roll, char * sensorNameB, float pitch, char * sensorNameC, float aY)
@@ -947,7 +947,7 @@ void displayQuantityUnit(float quantity, String units, int precision, int column
   float multiplier = 1;
   int width = 4 + precision;
   //int precision = 1;
-//Serial.println(quantity);
+  //Serial.println(quantity);
 
 
   if (abs(quantity) < 1e-6) {
@@ -987,7 +987,7 @@ void displayQuantityUnit(float quantity, String units, int precision, int column
 
   }
 
-  float x = quantity/multiplier;
+  float x = quantity / multiplier;
 
   dtostrf(x, width, precision, variableString);
 
@@ -1288,7 +1288,7 @@ void displayCurrentChart(int chan) {
     }
   }
 
-    float chartMaxHistoryMagnitudeCurrent = maxHistoryMagnitudeCurrent[chan] * 1.1;
+  float chartMaxHistoryMagnitudeCurrent = maxHistoryMagnitudeCurrent[chan] * 1.1;
   float chartMinHistoryMagnitudeCurrent = minHistoryMagnitudeCurrent[chan] * 0.9;
 
   for (int i = 1; i <= 20; i++) // print a series of short bars
@@ -1371,7 +1371,7 @@ void displayCoulombChart(int chan) {
   if (editFlag) {
     lcd.print(availableUpdateFrequenciesLabels[displayChannelCoulombFrequencyIndex[chan]]);
   } else {
-       displayQuantityUnit(sumCoulomb[chan], "C", 1, 12, 0);
+    displayQuantityUnit(sumCoulomb[chan], "C", 1, 12, 0);
 
   }
 
@@ -1403,10 +1403,10 @@ void displayBrackets(bool editFlag, int row, int startColumn, int endColumn, cha
   if (editFlag) {
     lcd.setCursor(startColumn, row);
     //lcd.print("[");
-        lcd.print(startBracket);
+    lcd.print(startBracket);
     lcd.setCursor(endColumn, row);
     //lcd.print("]");
-        lcd.print(endBracket);
+    lcd.print(endBracket);
 
   } else {
     lcd.setCursor(startColumn, row);
@@ -1443,35 +1443,43 @@ void loop()
 
 
     voltage[i] = (float) adsVoltage.computeVolts(adcVoltage[i]) * gainVoltage[i] + biasVoltage[i];
-  //  current[i] = (float) adsCurrent.computeVolts(adcCurrent[i]) / shuntMaxVoltage[i] * shuntMaxCurrent[i] * gainCurrent[i] + biasCurrent[i];
+    //  current[i] = (float) adsCurrent.computeVolts(adcCurrent[i]) / shuntMaxVoltage[i] * shuntMaxCurrent[i] * gainCurrent[i] + biasCurrent[i];
     // shuntMaxVoltage[i] * shuntMaxCurrent[i] * gainCurrent[i] + biasCurrent[i];
-    
+
     //sumCoulomb[i] = sumCoulomb[i] + current[i] * currentElapsedMillis[i] / 1e6;
-if (i != 0) {
+    if (i != 0) {
       currentElapsedMillis[i] = micros() - currentMillis[i];
-    currentMillis[i] = micros();
-current[i] = 0.0;
-sumCoulomb[i] = 0.0;
-}
+      currentMillis[i] = micros();
+      current[i] = 0.0;
+      sumCoulomb[i] = 0.0;
+    }
   }
-    currentMillis[0] = micros();
+
+  currentElapsedMillis[0] = micros() - currentMillis[0];
+  currentMillis[0] = micros();
 
   float multiplier = 0.0078125; /* ADS1115  @ +/- 6.144V gain (16-bit results) */
   int16_t results;
   results = adsCurrent.readADC_Differential_0_1();
   // millivots
   current[0] = (results * multiplier / 1000.0) / shuntMaxVoltage[0] * shuntMaxCurrent[0] * gainCurrent[0] + biasCurrent[0];
-  sumCoulomb[0] = sumCoulomb[0] + current[0] * currentElapsedMillis[0] / 1e6;
-
+  //sumCoulomb[0] = sumCoulomb[0] + current[0] * currentElapsedMillis[0] / 1e6;
+  // Try resolve floating point issue.
+  sumCoulomb[0] = sumCoulomb[0] + current[0] * currentElapsedMillis[0] / 1000000.0;
+  Serial.print("sumCoulomb[0]");
+  Serial.print(sumCoulomb[0]);
+  Serial.print("currentElapsedMillis[0]");
+  Serial.print(currentElapsedMillis[0]);
+  Serial.print("current[0]");
   Serial.println(current[0]);
-  
-/*
-Serial.println(adcVoltage[0]);
-Serial.println(voltage[0],4);
-Serial.println(conversionAdcVoltage[0]);
-Serial.println(gainVoltage[0],4);
-Serial.println(biasVoltage[0],4);
-*/
+
+  /*
+    Serial.println(adcVoltage[0]);
+    Serial.println(voltage[0],4);
+    Serial.println(conversionAdcVoltage[0]);
+    Serial.println(gainVoltage[0],4);
+    Serial.println(biasVoltage[0],4);
+  */
   static int pos = 0;
 
   int newPos = encoder->getPosition();
@@ -1755,7 +1763,7 @@ Serial.println(biasVoltage[0],4);
 
               //saveSettings();
               //selectFlag = false;
-              
+
             }
 
           }
