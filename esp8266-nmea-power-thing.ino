@@ -526,7 +526,7 @@ void setup()
 
   //WiFiManager wifiManager;
   //    wifiManager.setConfigPortalTimeout(15);
-  wifiManager.setAPCallback(configModeCallback);
+//  wifiManager.setAPCallback(configModeCallback);
   /*
   if ( digitalRead(D7) == LOW ) {
 
@@ -551,6 +551,8 @@ void setup()
   }
   */
     lcd.setCursor(0, 1);
+    lcd.print("WIFI  Connecting ");
+    lcd.setCursor(0, 1);
   lcd.print("WIFI  Portal opened");
   WiFi.mode(WIFI_STA); // explicitly set mode, esp defaults to STA+AP
   bool res;
@@ -560,7 +562,7 @@ void setup()
   res = wifiManager.autoConnect(nameThingWiFiAP);
   if (!res) {
     lcd.setCursor(0, 1);         // move cursor to   (2,
-    lcd.print("WIFI  Did not connect");
+    lcd.print("WIFI  Not connected");
     Serial.println("Configportal running");
     // Start up AP as available.
 
@@ -581,7 +583,7 @@ void setup()
   server.begin();
   //delay(2000);
 
-
+/*
   int wifiCount = 0;
   int maxWifiCount = 20;
 
@@ -619,7 +621,7 @@ void setup()
     lcd.print(     "WIFI  Not connected    ");
 
   }
-
+*/
   delay(1000);
   lcd.clear();
 }
@@ -634,7 +636,7 @@ void displayAbout() {
   lcd.print("stackr.ca");
 
   lcd.setCursor(0, 2);         // move cursor to   (2, 1)
-  lcd.print("1 February 2022");
+  lcd.print("3 February 2022");
 
   lcd.setCursor(0, 3);         // move cursor to   (2, 1)
   lcd.print(nuuidStr);
@@ -1421,7 +1423,7 @@ void loop()
 
   // Web server (http)
   wifiManager.process();
-  webThing();
+  //  webThing();
 
   int tempChan = 0;
 
@@ -1434,20 +1436,35 @@ void loop()
     voltageMillis[i] = micros();
     adcVoltage[i] = adsVoltage.readADC_SingleEnded(i);
 
-    currentElapsedMillis[i] = micros() - currentMillis[i];
-    currentMillis[i] = micros();
-    adcCurrent[i] = adsCurrent.readADC_SingleEnded(i);
+
+    //adcCurrent[i] = adsCurrent.readADC_SingleEnded(i);
     //voltage[i] = adcVoltage[i] * conversionAdcVoltage[i] * gainVoltage[i] + biasVoltage[i];
     //current[i] = adcCurrent[i] * conversionAdcCurrent[i] / shuntMaxVoltage[i] * shuntMaxCurrent[i] * gainCurrent[i] + biasCurrent[i];
 
 
     voltage[i] = (float) adsVoltage.computeVolts(adcVoltage[i]) * gainVoltage[i] + biasVoltage[i];
-    current[i] = (float) adsCurrent.computeVolts(adcCurrent[i]) / shuntMaxVoltage[i] * shuntMaxCurrent[i] * gainCurrent[i] + biasCurrent[i];
+  //  current[i] = (float) adsCurrent.computeVolts(adcCurrent[i]) / shuntMaxVoltage[i] * shuntMaxCurrent[i] * gainCurrent[i] + biasCurrent[i];
     // shuntMaxVoltage[i] * shuntMaxCurrent[i] * gainCurrent[i] + biasCurrent[i];
     
-    sumCoulomb[i] = sumCoulomb[i] + current[i] * currentElapsedMillis[i] / 1e6;
-
+    //sumCoulomb[i] = sumCoulomb[i] + current[i] * currentElapsedMillis[i] / 1e6;
+if (i != 0) {
+      currentElapsedMillis[i] = micros() - currentMillis[i];
+    currentMillis[i] = micros();
+current[i] = 0.0;
+sumCoulomb[i] = 0.0;
+}
   }
+    currentMillis[0] = micros();
+
+  float multiplier = 0.0078125; /* ADS1115  @ +/- 6.144V gain (16-bit results) */
+  int16_t results;
+  results = adsCurrent.readADC_Differential_0_1();
+  // millivots
+  current[0] = (results * multiplier / 1000.0) / shuntMaxVoltage[0] * shuntMaxCurrent[0] * gainCurrent[0] + biasCurrent[0];
+  sumCoulomb[0] = sumCoulomb[0] + current[0] * currentElapsedMillis[0] / 1e6;
+
+  Serial.println(current[0]);
+  
 /*
 Serial.println(adcVoltage[0]);
 Serial.println(voltage[0],4);
